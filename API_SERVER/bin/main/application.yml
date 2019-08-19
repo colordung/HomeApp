@@ -1,0 +1,32 @@
+server:
+  port: 8090
+  
+logging:
+  level:
+    com.colordung: DEBUG
+  file: /Users/hanwhalife002/eclipse-workspace/HomeAppLog
+  file.max-history: 30
+
+spring:
+  datasource:
+    driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/HOMEAPP?autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: password
+    initSQL: SELECT 1
+    tomcat:
+      max-wait: 3000
+      max-active: 2
+      test-on-borrow: true
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.colordung.domain
+  configuration:
+    lazyLoadingEnabled: true
+    aggressiveLazyLoading: false
+    mapUnderscoreToCamelCase: true

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.colordung.dao.SystemDao">
+<!-- 	CREATE TABLE `TB_MENU` (
+	  `menuSeq` int(11) NOT NULL AUTO_INCREMENT COMMENT '메뉴순번',
+	  `parentMenuSeq` int(11) DEFAULT NULL COMMENT '상위메뉴순번',
+	  `menuName` varchar(100) NOT NULL COMMENT '메뉴명',
+	  `menuUrl` varchar(200) NOT NULL COMMENT '메뉴URL',
+	  `useYn` varchar(1) NOT NULL COMMENT '사용여부',
+	  `memo` varchar(1000) DEFAULT NULL COMMENT '메모',
+	  `menuSort` int(11) DEFAULT NULL COMMENT '메뉴순서',
+	  `creDate` datetime NOT NULL COMMENT '생성일자',
+	  `updDate` datetime DEFAULT NULL COMMENT '수정일자',
+	  PRIMARY KEY (`menuSeq`)
+	) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='메뉴'; -->
+	
+	<!-- 사용중인 메뉴 목록조회 resultMap -->
+	<resultMap id="menuListResultMap" type="Menu">
+		<result column="menuSeq" property="menuSeq"/>
+		<result column="parentMenuSeq" property="parentMenuSeq"/>
+		<result column="menuName" property="menuName"/>
+		<result column="menuUrl" property="menuUrl"/>
+		<result column="useYn" property="useYn"/>
+		<result column="memo" property="memo"/>
+		<result column="menuSort" property="menuSort"/>
+		<result column="creDate" property="creDate"/>
+		<result column="updDate" property="updDate"/>
+		<collection property="subMenus" column="{menuSeq=menuSeq}" javaType="java.util.ArrayList" ofType="Menu" select="getSubMenuListById"/>
+	</resultMap>
+
+	<!-- 전체메뉴 목록조회 resultMap -->
+	<resultMap id="menuAllListResultMap" type="Menu">
+		<result column="menuSeq" property="menuSeq"/>
+		<result column="parentMenuSeq" property="parentMenuSeq"/>
+		<result column="menuName" property="menuName"/>
+		<result column="menuUrl" property="menuUrl"/>
+		<result column="useYn" property="useYn"/>
+		<result column="memo" property="memo"/>
+		<result column="menuSort" property="menuSort"/>
+		<result column="creDate" property="creDate"/>
+		<result column="updDate" property="updDate"/>
+		<collection property="subMenus" column="menuSeq" javaType="java.util.ArrayList" ofType="Menu" select="getSubMenuAllListById"/>
+	</resultMap>
+	
+	<!-- 전체 메뉴 목록조회 -->
+	<select id="getMenuAllList" resultMap="menuAllListResultMap">
+	SELECT 
+		menuSeq,
+		parentMenuSeq,
+		menuName,
+		menuUrl,
+		useYn,
+		memo,
+		menuSort,
+		creDate,
+		updDate
+	FROM TB_MENU
+	WHERE parentMenuSeq = 0
+	ORDER BY menuSort ASC
+	</select>	
+	
+	<!-- 전체 sub menu 목록조회 -->
+	<select id="getSubMenuAllListById" resultType="Menu">
+	SELECT 
+		menuSeq,
+		parentMenuSeq,
+		menuName,
+		menuUrl,
+		useYn,
+		memo,
+		menuSort,
+		creDate,
+		updDate
+	FROM TB_MENU
+	WHERE parentMenuSeq = #{menuSeq}
+	ORDER BY menuSort ASC
+	</select>
+	
+	<!-- 사용중인 메뉴 목록조회 -->
+	<select id="getMenuList" parameterType="string" resultMap="menuListResultMap">
+	SELECT 
+		A.menuSeq,
+		A.parentMenuSeq,
+		A.menuName,
+		A.menuUrl,
+		A.useYn,
+		A.memo,
+		A.menuSort,
+		A.creDate,
+		A.updDate
+	FROM TB_MENU A
+	WHERE useYn = 'Y' AND parentMenuSeq = 0
+	ORDER BY menuSort ASC
+	</select>	
+
+	<!-- 사용중인 sub Menu 목록조회 -->
+	<select id="getSubMenuListById" parameterType="java.util.Map" resultType="Menu">
+	SELECT 
+		A.menuSeq,
+		A.parentMenuSeq,
+		A.menuName,
+		A.menuUrl,
+		A.useYn,
+		A.memo,
+		A.menuSort,
+		A.creDate,
+		A.updDate
+	FROM TB_MENU A
+	WHERE useYn = 'Y' AND parentMenuSeq = #{menuSeq}
+	ORDER BY menuSort ASC
+	</select>
+	
+</mapper>
